@@ -1,4 +1,4 @@
-//!tarifario
+//! tarifario 
 const arrayPasajes = [];
 
 class Pasaje {
@@ -28,9 +28,16 @@ let pasaje13 = arrayPasajes.push(new Pasaje('seccion3', 'GUERNICA', 90));
 let pasaje14 = arrayPasajes.push(new Pasaje('seccion3', 'KORN', 90));
 
 
-//! compra pasaje
+//! proceso de compra
+//saldo por defecto
 let saldoActual = 80;
 
+//funcion para cargar saldo por defecto
+function sumaSaldo(val1, val2) {
+    return parseInt(val1 + val2);
+}
+
+//inicio del simulador
 function saludar() {
     let nombre = prompt('Por favor ingresa tu nombre para comenzar');
     while (nombre === "" || !isNaN(parseInt(nombre))) {
@@ -38,23 +45,35 @@ function saludar() {
     }
     alert(`Hola ${nombre}!\nTu saldo actual es de $${saldoActual}`);
 }
+saludar();
 
+//compra del pasaje e informacion de saldo restante
 let destino = prompt('Ingrese un destino para comprar su pasaje');
 for (let info of arrayPasajes) {
     if (destino.toUpperCase() == info.estacion) {
         let valorPasaje = parseInt(info.valor);
+        alert(`el valor del pasaje es $${info.valor}`);
 
-        if ((saldoActual || nuevoSaldo()) < valorPasaje) {
+        if (valorPasaje > saldoActual) {
             alert('Su saldo es insuficiente');
-            let cargaSaldo = parseInt(prompt('Cargar saldo para continuar'));
-            function nuevoSaldo(num1, num2) {
-                return (saldoActual + cargaSaldo);
-                }
-        } else if (saldoActual > info.valor) {
-            alert('Buen viaje \n\n * Su saldo restante es: $ ' + (saldoActual - info.valor));
-        } else {
-            alert('Por favor ingrese un destino valido');
+            let cargaSaldo = parseInt(prompt('Cargue saldo para continuar'));
+            let nuevoSaldo = sumaSaldo(saldoActual, cargaSaldo);
+            if (nuevoSaldo < valorPasaje){
+                alert('Su saldo continua siendo insuficiente');
+                cargaSaldo = parseInt(prompt('Cargue saldo para continuar'));
+                nuevoSaldo = sumaSaldo(saldoActual, cargaSaldo);
+            }else if (nuevoSaldo >= valorPasaje){
+                alert(`Buen viaje \n\n * Su saldo restante es: \$ ${nuevoSaldo - info.valor}`);
+            }
+        } else if (valorPasaje <= saldoActual){
+            alert(`Buen viaje \n\n * Su saldo restante es: \$ ${saldoActual - info.valor}`);
+        } else{
+            alert('Error');
         }
+    } else if ((destino.toUpperCase() != info.estacion) || (destino == (null || "" || isNaN))){
+        alert('Por favor ingrese un destino valido');
+    }else{
+        alert('Error');
     }
 }
 
